@@ -29,8 +29,22 @@ def fetch_all_comments():
         return {"statusCode": 200, "body": json.dumps(items, cls=DecimalEncoder)}
     else:
         return {"statusCode": 404, "body": "comments not found"}
-    
+
+def edit_comment_text(id, new_text):
+    table.update_item(
+        Key={"id": id},
+        UpdateExpression="SET #text = :text",
+        ExpressionAttributeNames={
+            "#text": "text"  
+        },
+        ExpressionAttributeValues={
+            ":text": new_text
+        }
+    )
+    return {"statusCode": 200, "body": "Comment updated successfully"}
+
 if __name__ == "__main__":
     
-    result = fetch_all_comments()
+    # result = fetch_all_comments()
+    result = edit_comment_text("1", "lol")
     print(result)
