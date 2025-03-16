@@ -29,7 +29,9 @@ async def fetch_all_comments():
     # print(response)
     items = response["Items"]
     if items:
-        return {"statusCode": 200, "body": json.dumps(items, cls=DecimalEncoder)}
+        # Sort items by converting string ID to integer
+        sorted_items = sorted(items, key=lambda x: int(x.get('id', '0')))
+        return {"statusCode": 200, "body": json.dumps(sorted_items, cls=DecimalEncoder)}
     else:
         return {"statusCode": 404, "body": "comments not found"}
 
