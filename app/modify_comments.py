@@ -23,7 +23,7 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(o)
 
 # List all comments
-def fetch_all_comments():
+async def fetch_all_comments():
     response = table.scan()
     # print(response)
     items = response["Items"]
@@ -32,7 +32,7 @@ def fetch_all_comments():
     else:
         return {"statusCode": 404, "body": "comments not found"}
 
-def edit_comment_text(id, new_text):
+async def edit_comment_text(id, new_text):
     table.update_item(
         Key={"id": id},
         UpdateExpression="SET #text = :text",
@@ -46,7 +46,7 @@ def edit_comment_text(id, new_text):
     return {"statusCode": 200, "body": "Comment updated successfully"}
 
 # Add a comment, with new text (from “Admin” user), with the current time
-def add_admin_comment(text=None, image=None):
+async def add_admin_comment(text=None, image=None):
     comment_id = str(uuid.uuid4()) # we can also get the biggest id of the id in the table, and +1 to that
     
     # get current timestamp in the specified format (2015-09-01T13:10:00Z)
@@ -70,7 +70,7 @@ def add_admin_comment(text=None, image=None):
     }
 
 # Delete existing comments 
-def delete_comment_by_id(comment_id):
+async def delete_comment_by_id(comment_id):
     try:
         response = table.get_item(Key={"id": comment_id})
         
@@ -93,7 +93,7 @@ def delete_comment_by_id(comment_id):
             "body": f"Error deleting comment: {str(e)}"
         }
     
-def delete_all_comments():
+async def delete_all_comments():
     response = table.scan(AttributesToGet=["id"])
     items = response.get("Items", [])
     
@@ -105,7 +105,6 @@ def delete_all_comments():
             "statusCode": 200,
             "body": f"Deleted {len(items)} items from the database."
         }
-   
     
 if __name__ == "__main__":
     
