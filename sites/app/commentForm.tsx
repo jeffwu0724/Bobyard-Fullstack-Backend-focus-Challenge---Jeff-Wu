@@ -21,6 +21,7 @@ const CommentForm = () => {
       if (response.ok) {
         setComment('');
         setStatus('Comment added successfully!');
+        window.location.reload();
       } else {
         setStatus('Failed to add comment');
       }
