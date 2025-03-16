@@ -12,6 +12,7 @@ import json
 import decimal
 import datetime
 import uuid
+import time
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("comments")
@@ -56,7 +57,8 @@ async def edit_comment_text(id, new_text):
 
 # Add a comment, with new text (from “Admin” user), with the current time
 async def add_admin_comment(text=None, image=None):
-    comment_id = str(uuid.uuid4()) # we can also get the biggest id of the id in the table, and +1 to that
+    
+    comment_id = str(int(time.time() * 1000))  # Milliseconds since epoch
     
     # get current timestamp in the specified format (2015-09-01T13:10:00Z)
     current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
