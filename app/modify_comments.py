@@ -69,9 +69,50 @@ def add_admin_comment(text=None, image=None):
         "body": f"Comment added successfully with ID: {comment_id}"
     }
 
+# Delete existing comments 
+def delete_comment_by_id(comment_id):
+    try:
+        response = table.get_item(Key={"id": comment_id})
+        
+        if "Item" not in response:
+            return {
+                "statusCode": 404,
+                "body": f"Comment with ID {comment_id} not found"
+            }
+        
+        # Delete the comment
+        table.delete_item(Key={"id": comment_id})
+        
+        return {
+            "statusCode": 200,
+            "body": f"Comment with ID {comment_id} deleted successfully"
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": f"Error deleting comment: {str(e)}"
+        }
+    
+def delete_all_comments():
+    response = table.scan(AttributesToGet=["id"])
+    items = response.get("Items", [])
+    
+    # Delete each item
+    for item in items:
+        table.delete_item(Key={"id": item["id"]})
+
+    return {
+            "statusCode": 200,
+            "body": f"Deleted {len(items)} items from the database."
+        }
+   
+    
 if __name__ == "__main__":
     
     # result = fetch_all_comments()
     # result = edit_comment_text("1", "lol")
-    result = add_admin_comment("this is a new one")
+    # result = add_admin_comment("this is a new one")
+    # result = delete_comment_by_id('2')
+    result = delete_all_comments()
+
     print(result)
