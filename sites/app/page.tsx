@@ -69,11 +69,6 @@ export default function CommentsPage() {
                         alt={`Image from ${comment.author}`}
                         className="max-w-xs object-contain h-auto"
                         style={{ maxHeight: '150px' }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/api/placeholder/300/200";
-                          e.target.alt = "Image failed to load";
-                        }}
                       />
                     </div>
                   </div>
@@ -87,6 +82,35 @@ export default function CommentsPage() {
                 <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
               </div>
             </div>
+
+            <div className="mt-4 text-right">
+                <button
+                  onClick={() => {
+                    console.log(`Comment ID: ${comment.id}`);
+                    
+                    // Make a fetch request to the delete endpoint
+                    fetch(`http://localhost:8000/delete_comment_by_id?id=${comment.id}`)
+                      .then(response => {
+                        console.log('Delete response:', response);
+                        
+                        // Refresh the current page after successful deletion
+                        if (response.ok) {
+                          window.location.reload();
+                        } else {
+                          console.error('Failed to delete comment');
+                          alert('Error deleting comment. Please try again.');
+                        }
+                      })
+                      .catch(error => {
+                        console.error('Error deleting comment:', error);
+                        alert('Error deleting comment. Please try again.');
+                      });
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+                >
+                  Delete Comment
+                </button>
+              </div>
           </div>
         ))}
       </div>
