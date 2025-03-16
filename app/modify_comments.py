@@ -9,6 +9,8 @@
 import boto3
 import json
 import decimal
+import datetime
+import uuid
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("comments")
@@ -43,8 +45,33 @@ def edit_comment_text(id, new_text):
     )
     return {"statusCode": 200, "body": "Comment updated successfully"}
 
+# Add a comment, with new text (from “Admin” user), with the current time
+def add_admin_comment(text=None, image=None):
+    comment_id = str(uuid.uuid4()) # we can also get the biggest id of the id in the table, and +1 to that
+    
+    # get current timestamp in the specified format (2015-09-01T13:10:00Z)
+    current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    
+    # Create the comment item
+    comment_item = {
+        "id": comment_id,
+        "author": "Admin",
+        "text": text,
+        "date": current_time,
+        "likes": 0,
+        "image": ""  
+    }
+    
+    table.put_item(Item=comment_item)
+    
+    return {
+        "statusCode": 201,
+        "body": f"Comment added successfully with ID: {comment_id}"
+    }
+
 if __name__ == "__main__":
     
     # result = fetch_all_comments()
-    result = edit_comment_text("1", "lol")
+    # result = edit_comment_text("1", "lol")
+    result = add_admin_comment("this is a new one")
     print(result)
