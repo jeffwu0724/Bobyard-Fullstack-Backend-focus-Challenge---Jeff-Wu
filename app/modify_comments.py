@@ -6,6 +6,7 @@
 # Delete existing comments 
 # List all comments
 
+from fastapi import HTTPException
 import boto3
 import json
 import decimal
@@ -33,6 +34,12 @@ async def fetch_all_comments():
         return {"statusCode": 404, "body": "comments not found"}
 
 async def edit_comment_text(id, new_text):
+    response = table.get_item(Key={"id": id})
+    
+    if "Item" not in response:
+        # Comment not found, raise an HTTPException
+        raise HTTPException(status_code=404, detail=f"Comment with ID {id} not found")
+    
     table.update_item(
         Key={"id": id},
         UpdateExpression="SET #text = :text",
