@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import CommentForm from "./commentForm";
 
 export default function CommentsPage() {
   const [comments, setComments] = useState([]);
@@ -114,6 +115,8 @@ export default function CommentsPage() {
           </div>
         ))}
       </div>
+
+     <CommentForm />
     </div>
   );
 }
